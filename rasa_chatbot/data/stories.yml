@@ -1,0 +1,36 @@
+version: "3.1"
+
+stories:
+  - story: tìm sản phẩm theo tên
+    steps:
+      - intent: ask_product
+      - action: action_get_product_info
+
+  - story: tìm sản phẩm theo danh mục
+    steps:
+      - intent: ask_category
+      - action: action_get_product_info
+
+  - story: chào hỏi
+    steps:
+      - intent: greet
+      - action: utter_greet
+
+  - story: tạm biệt
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - story: gợi ý chọn sản phẩm gần đúng
+    steps:
+      - intent: ask_product
+      - action: action_get_product_info
+      - intent: affirm
+      - action: action_get_product_info
+
+  - story: từ chối gợi ý
+    steps:
+      - intent: ask_product
+      - action: action_get_product_info
+      - intent: deny
+      - action: utter_greet

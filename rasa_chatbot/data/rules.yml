@@ -1,0 +1,18 @@
+version: "3.1"
+
+rules:
+
+  - rule: Say goodbye anytime the user says goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - rule: Say 'I am a bot' anytime the user challenges
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+
+  - rule: Trả lời thông tin sản phẩm khi người dùng hỏi
+    steps:
+      - intent: ask_product
+      - action: action_get_product_info

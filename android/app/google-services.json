@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "272602414979",
+    "firebase_url": "https://book-app-a2432-default-rtdb.firebaseio.com",
+    "project_id": "book-app-a2432",
+    "storage_bucket": "book-app-a2432.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272602414979:android:3e111b77fbebc447a400b6",
+        "android_client_info": {
+          "package_name": "com.example.tbshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL5JsEUJg__zfVjr1HsiHC02EyC1ZJXZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

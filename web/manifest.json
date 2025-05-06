@@ -1,0 +1,35 @@
+{
+    "name": "tbshop",
+    "short_name": "tbshop",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "TBShop is a cross-platform e-commerce application built using Flutter and Firebase. It integrates artificial intelligence features to enhance user experience and optimize sales revenue. The application leverages AI for personalized product recommendations, demand forecasting, and customer behavior analysis, ensuring a smart and intuitive shopping experience for users.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

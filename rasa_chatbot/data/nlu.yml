@@ -1,0 +1,42 @@
+version: "3.1"
+
+nlu:
+  - intent: greet
+    examples: |
+      - Xin chào
+      - Hello
+      - Hi
+      - Chào bạn
+  - intent: goodbye
+    examples: |
+      - Tạm biệt
+      - Bye
+      - Chào nhé
+      - Hẹn gặp lại
+
+  - intent: ask_product
+    examples: |
+      - Tôi muốn tìm sản phẩm [giày thể thao](name)
+      - Có sản phẩm [iphone 14](name) không?
+      - Cho mình hỏi về [tai nghe bluetooth](name)
+      - [Macbook Pro](name) giá bao nhiêu?
+
+  - intent: ask_category
+    examples: |
+      - Sản phẩm nào trong danh mục [điện thoại](category)?
+      - Các sản phẩm thuộc [máy tính bảng](category) có gì?
+      - Cho mình xem [phụ kiện](category)
+
+  - intent: affirm
+    examples: |
+      - Đúng rồi
+      - Vâng
+      - Ok
+      - Chính xác
+
+  - intent: deny
+    examples: |
+      - Không
+      - Không phải
+      - Sai rồi
+      - Không đúng
