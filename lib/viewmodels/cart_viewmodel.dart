@@ -92,51 +92,6 @@ class CartViewModel extends ChangeNotifier {
       return sum + discountedPrice * item.quantity;
     });
   }
-
-  Future<void> mergeCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartData = prefs.getString('cart');
-
-    // Nếu không có dữ liệu giỏ hàng, không làm gì cả
-    if (cartData == null) return;
-
-    // Giải mã dữ liệu giỏ hàng cục bộ
-    final List<dynamic> decoded = jsonDecode(cartData);
-    final List<CartItem> localItems =
-    decoded.map((item) => CartItem.fromMap(item)).toList();
-
-    // Lấy cart_id từ SharedPreferences
-    String? cartId = prefs.getString('cart_id');
-
-    // Nếu không có cart_id, không tiếp tục
-    if (cartId == null || cartId.isEmpty) return;
-
-    final dbRef =
-    FirebaseDatabase.instance.ref().child("user_carts").child(cartId);
-    final snapshot = await dbRef.get();
-
-    List<CartItem> firebaseItems = [];
-
-    // Nếu có dữ liệu giỏ hàng trong Firebase
-    if (snapshot.exists) {
-      final data = Map<String, dynamic>.from(snapshot.value as Map);
-      firebaseItems = data.entries.map((entry) {
-        final value = Map<String, dynamic>.from(entry.value);
-        return CartItem.fromMap(value);
-      }).toList();
-    }
-
-    // Kết hợp dữ liệu giỏ hàng
-    final Map<String, dynamic> firebaseData = {
-      for (var item in firebaseItems) item.product.id: item.toMap(),
-    };
-
-    // Lưu lại dữ liệu giỏ hàng mới vào Firebase
-    await dbRef.set(firebaseData);
-
-    // Xóa giỏ hàng cục bộ
-    await prefs.remove('cart');
-  }
   void clearCart() {
     _items.clear();
     notifyListeners();

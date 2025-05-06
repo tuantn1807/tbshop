@@ -14,7 +14,7 @@
 
 ### User:
 - Đăng ký, đăng nhập, đăng xuất
-- Duyệt danh mục sản phẩm
+- Xem danh mục sản phẩm
 - Tìm kiếm sản phẩm
 - Xem thông tin chi tiết sản phẩm
 - Xem các sản phẩm được giảm giá trên 10%
@@ -79,8 +79,6 @@
     ```
    ```
    my_env\Scripts\activate
-    ```
-     ```
     ```
    ```
    pip install rasa**(chỉ chạy lần đầu)**
