@@ -77,10 +77,12 @@
     ```
    python -m venv my_env (chỉ chạy lần đầu)
     ```
+   ```
    my_env\Scripts\activate
     ```
      ```
     ```
+   ```
    pip install rasa**(chỉ chạy lần đầu)**
     ```
     ```
