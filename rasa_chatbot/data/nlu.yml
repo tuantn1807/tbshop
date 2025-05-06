@@ -23,7 +23,7 @@ nlu:
 
   - intent: ask_category
     examples: |
-      - Sản phẩm nào trong danh mục [điện thoại](category)?
+      - Sản phẩm nào trong dagit push origin --deletenh mục [điện thoại](category)?
       - Các sản phẩm thuộc [máy tính bảng](category) có gì?
       - Cho mình xem [phụ kiện](category)
 

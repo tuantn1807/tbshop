@@ -1,46 +1,76 @@
-#  TBShop
+# TBShop
 
-**TBShop** is a cross-platform e-commerce mobile application built using **Flutter** and **Firebase**, designed with the **MVVM architecture**. The app integrates **Artificial Intelligence (AI)** for enhanced user experience through personalized product recommendations, demand forecasting, and chatbot-based customer support.
+## Mô tả chung
 
----
+**TLShop** là ứng dụng thương mại điện tử đa nền tảng được xây dựng bằng **Flutter** và **Firebase**, được thiết kế theo **kiến trúc MVVM**. Ứng dụng tích hợp **Trí tuệ nhân tạo (AI)** để nâng cao trải nghiệm người dùng thông qua các gợi ý sản phẩm cá nhân hóa, dự báo nhu cầu và hỗ trợ khách hàng bằng chatbot.
 
-## Key Features
+## Tính năng:
+### Admin
+- Đăng nhập, đăng xuất
+- Quản lý danh mục sản phẩm (xem, thêm, sửa, xóa)
+- Quản lý sản phẩm (xem, thêm, sửa, xóa)
+- Xem đánh giá chi tiết về sản phẩm
+- Quản lý đơn hàng của khách hàng
 
-###  Admin
-- Login
-- Manage product categories (add, edit, delete)
-- Manage products (add, edit, delete)
-- View detailed product reviews
-- Manage customer orders
+### User:
+- Đăng ký, đăng nhập, đăng xuất
+- Duyệt danh mục sản phẩm
+- Tìm kiếm sản phẩm
+- Xem thông tin chi tiết sản phẩm
+- Xem các sản phẩm được giảm giá trên 10%
+- Gửi đánh giá sản phẩm
+- Xem, sửa, xóa đánh giá sản phẩm đã gửi
+- Đặt hàng và theo dõi đơn hàng
+- Xem lịch sử đơn hàng
+- Hỗ trợ qua chatbot
+- Nhận gợi ý sản phẩm thông qua AI
 
-###  User
-- Register and login
-- Browse product catalog
-- View product details
-- Submit product ratings and reviews
-- Place and track orders
-- Chatbot assistance
-- Receive AI-powered product recommendations
+## Công nghệ sử dụng
 
----
+### Giao diện người dùng (UI/Frontend)
+- Flutter, Dart
 
-## AI Features
-- **Chatbot Support**: Built with for natural language interaction.
-- **Hybrid Recommender System**:
-- Data: Rating,Click,Cart
-- Content based and collaborative filtering
-- **Demand Forecasting**: Predicts future shopping needs to support inventory and personalized recommendations.
+### Backend
+- Firebase Realtime Database
 
----
+### Lưu trữ
+- Firebase Storage
 
-## Tech Stack
-UI/Frontend:   Flutter, Dart                  
-Backend:       Firebase Realtime Database     
-Storage:       Firebase Storage                 
-AI:            Rasa (for chatbot), custom recommender engine
+### Trí tuệ nhân tạo (AI)
+- Rasa (cho chatbot)
+- Hệ thống gợi ý tùy chỉnh:
+    - Dữ liệu: Đánh giá, Click, Giỏ hàng
+    - Kết hợp phương pháp lọc dựa trên nội dung và lọc cộng tác
+    - Dự báo nhu cầu: Dự đoán nhu cầu mua sắm trong tương lai để hỗ trợ quản lý kho hàng và đưa ra gợi ý cá nhân hóa
+### Kiến trúc
+- MVVM (Model-View-ViewModel) nhằm tăng khả năng mở rộng và phân tách các thành phần
+## Cài đặt và chạy ứng dụng
+### Yêu cầu hệ thống
+- Flutter SDK
+- Dart
+- Firebase account
+### Các bước cài đặt
+1. Clone repository:
+   ```
+   git clone https://github.com/tuantuan1807/tlshop
+   ```
+2. Di chuyển vào thư mục dự án:
+   ```
+   cd tlshop
+   ```
+3. Cài đặt các dependencies:
+   ```
+   flutter pub get
+   ```
+4. Kết nối với Firebase:
+    - Tạo dự án trên Firebase Console
+    - Thêm ứng dụng Android/iOS vào dự án Firebase
+    - Tải file cấu hình và thêm vào dự án
+5. Chạy ứng dụng:
+   ```
+   flutter run
+   ```
 
----
-## Architecture: MVVM
-
-The project follows the **MVVM** (Model-View-ViewModel) pattern for scalability and separation of concerns.
-
+### Tài khoản demo
+- **Admin**: 030041975 / password: 123456789
+- **User**: 0911103884 / password: 18072004
