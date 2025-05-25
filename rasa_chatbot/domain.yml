@@ -2,16 +2,13 @@ version: "3.1"
 
 intents:
   - ask_product
-  - ask_category
   - affirm
   - deny
   - greet
   - goodbye
-  - iamabot  # Intent mới nếu bạn muốn bot nói là AI
-
+  - iamabot
 entities:
   - name
-  - category
 
 slots:
   name:
@@ -20,21 +17,15 @@ slots:
     mappings:
       - type: from_entity
         entity: name
-  category:
-    type: text
-    influence_conversation: true
-    mappings:
-      - type: from_entity
-        entity: category
 
 responses:
   utter_greet:
     - text: "Xin chào! Tôi có thể giúp gì cho bạn hôm nay?"
   utter_goodbye:
     - text: "Chào tạm biệt! Chúc bạn một ngày tốt lành."
-  utter_iamabot:  # Thêm action 'utter_iamabot' tại đây
+  utter_iamabot:
     - text: "Tôi là một chatbot AI, tôi có thể giúp bạn tìm sản phẩm hoặc trả lời câu hỏi."
 
 actions:
   - action_get_product_info
-  - utter_iamabot  # Đảm bảo action này có mặt trong danh sách actions
+  - utter_iamabot

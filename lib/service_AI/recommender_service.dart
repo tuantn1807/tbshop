@@ -17,7 +17,7 @@ class HybridRecommender {
       List<RatingModel> allRatings,
       List<ClickEvent> allClicks,
       List<String> allProductIds,
-      Map<String, String> productCategoryMap, // Thêm bản đồ productId -> category
+      Map<String, String> productCategoryMap,
       ) async {
     final cartFeatures = preprocessingService.extractCartFeatures(userCartData);
     final ratingFeatures = preprocessingService.extractRatingFeatures(allRatings);
@@ -27,7 +27,6 @@ class HybridRecommender {
     String? userId = prefs.getString("id");
     if (userId == null) return [];
 
-    // --- Tự động tính trọng số ---
     int totalCart = cartFeatures.values.fold(0, (sum, map) => sum + map.length);
     int totalRating = ratingFeatures.values.fold(0, (sum, map) => sum + map.length);
     int totalClick = clickFeatures.values.fold(0, (sum, map) => sum + map.length);
@@ -52,15 +51,13 @@ class HybridRecommender {
       return getTopClickedProducts(clickFeatures, allProductIds);
     }
 
-    // Tập các sản phẩm user đã tương tác
     final userHistory = {
       ...?cartFeatures[userId]?.keys,
       ...?ratingFeatures[userId]?.keys,
       ...?clickFeatures[userId]?.keys,
     };
 
-    // --- Gợi ý theo danh mục ưu tiên ---
-    // Đếm số lần user tương tác theo danh mục
+
     final Map<String, int> categoryCount = {};
     for (var pid in userFeature.keys) {
       final category = productCategoryMap[pid];
@@ -69,12 +66,12 @@ class HybridRecommender {
       }
     }
 
-    // Lấy các danh mục phổ biến nhất mà user tương tác
+
     final topCategories = categoryCount.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     final Set<String> preferredCategories = topCategories.take(2).map((e) => e.key).toSet();
 
-    // Tổng điểm cho mỗi sản phẩm toàn hệ thống
+
     final Map<String, double> totalProductScores = {};
     mergedFeatures.forEach((uid, productMap) {
       productMap.forEach((productId, score) {
@@ -83,7 +80,7 @@ class HybridRecommender {
       });
     });
 
-    // Sắp xếp sản phẩm theo điểm + ưu tiên danh mục user hay xem
+
     final recommendations = totalProductScores.entries
         .where((entry) => !userHistory.contains(entry.key))
         .toList()

@@ -21,7 +21,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final response = await http.post(
         //may ao: 10.0.2.2
-        Uri.parse("http://192.168.6.170:5005/webhooks/rest/webhook") ,// sửa localhost
+        Uri.parse("http://10.0.2.2:5005/webhooks/rest/webhook") ,// sửa localhost
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"sender": "user", "message": message}),
       );

@@ -1,9 +1,9 @@
-from typing import Any, Text, Dict, List
-from rasa_sdk import Action, Tracker
+from rasa_sdk import Action
+from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
+from rasa_sdk import Tracker
 import requests
-import re
-from fuzzywuzzy import process
+from typing import Any, Text, Dict, List
 
 class ActionGetProductInfo(Action):
     def name(self) -> Text:
@@ -14,7 +14,6 @@ class ActionGetProductInfo(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
         product_name = tracker.get_slot("name")
-        category_name = tracker.get_slot("category")
 
         firebase_url = "https://book-app-a2432-default-rtdb.firebaseio.com/products.json"
         response = requests.get(firebase_url)
@@ -26,46 +25,14 @@ class ActionGetProductInfo(Action):
         products = response.json()
         product_list = list(products.values())
 
-        # Tập hợp từ khóa sản phẩm
-        product_keywords = set()
-        for p in product_list:
-            name = p.get("name", "")
-            words = re.findall(r'\w+', name.lower())
-            product_keywords.update(words)
-
-        def find_best_match(name, choices, key=lambda x: x):
-            names = [key(c).lower() for c in choices]
-            match, score = process.extractOne(name.lower(), names)
-            if score >= 70:
-                matched_index = names.index(match)
-                return choices[matched_index]
-            return None
-
-        def find_top_matches(name, choices, key=lambda x: x, limit=3):
-            names = [key(c).lower() for c in choices]
-            matches = process.extract(name.lower(), names, limit=limit)
-            results = []
-            for match, score in matches:
-                if score >= 50:
-                    matched_index = names.index(match)
-                    results.append(choices[matched_index])
-            return results
-
-        def clean_text_dynamic(text):
-            words = re.findall(r'\w+', text.lower())
-            important_words = [word for word in words if word in product_keywords]
-            cleaned = ' '.join(important_words)
-            return cleaned
-
         message = ""
 
         if product_name:
-            # Tìm sản phẩm
-            product = find_best_match(product_name, product_list, key=lambda p: p.get("name", ""))
+            normalized_product_name = product_name.strip().lower()
 
-            if not product:
-                cleaned_name = clean_text_dynamic(product_name)
-                product = find_best_match(cleaned_name, product_list, key=lambda p: p.get("name", ""))
+            print(f"Product name from user: '{normalized_product_name}'")  # Debug
+
+            product = next((p for p in product_list if normalized_product_name in p.get("name", "").strip().lower()), None)
 
             if product:
                 name = product.get("name", "Không rõ")
@@ -76,36 +43,14 @@ class ActionGetProductInfo(Action):
                 if int(quantity) == 0:
                     message = f"Rất tiếc, sản phẩm {name} hiện đã hết hàng."
                 else:
-                    message = f"Sản phẩm {name} có giá {price}đ, còn {quantity} cái và giảm giá {discount}%."
-
+                    message = f"Sản phẩm {name} có giá {price}đ, còn {quantity} cái và giảm giá {discount}%. "
             else:
-                # Nếu không tìm thấy, gợi ý những sản phẩm gần nhất
-                top_matches = find_top_matches(product_name, product_list, key=lambda p: p.get("name", ""))
-                if top_matches:
-                    message = "Xin lỗi, tôi không tìm thấy sản phẩm chính xác. Bạn có muốn tìm những sản phẩm gần giống này không?\n"
-                    for p in top_matches:
-                        message += f"- {p.get('name', 'Không rõ')}\n"
-                else:
-                    message = f"Xin lỗi, TBShop chưa có sản phẩm giống '{product_name}'. Bạn có thể nhập tên sản phẩm khác không?"
-                    # Tự học nhẹ: ghi log tên sản phẩm chưa có (giả sử lưu file)
-                    with open("unknown_products.txt", "a", encoding="utf-8") as f:
-                        f.write(product_name + "\n")
+                message = f"Xin lỗi, tôi không tìm thấy sản phẩm '{product_name}'. Bạn có thể thử tìm sản phẩm khác không?"
 
-        elif category_name:
-            matched_products = [p for p in product_list if category_name.lower() in p.get("category_name", "").lower()]
-            if matched_products:
-                message = f"Các sản phẩm thuộc danh mục '{category_name}':\n"
-                for p in matched_products:
-                    name = p.get("name", "Không rõ")
-                    price = p.get("price", "Không rõ")
-                    quantity = p.get("quantity", "Không rõ")
-                    discount = p.get("discount", "0")
-                    message += f"- {name}: {price}đ, còn {quantity} cái, giảm {discount}%\n"
-            else:
-                message = f"Không tìm thấy sản phẩm nào trong danh mục '{category_name}'. Bạn có muốn xem danh mục gần giống không?"
+            print(f"List of products: {[p.get('name', 'Không rõ') for p in product_list]}")
 
         else:
-            message = "Bạn muốn tìm theo tên sản phẩm hay danh mục nào?"
+            message = "Bạn muốn tìm thông tin sản phẩm nào? Ví dụ: giày thể thao, iphone 14, tai nghe bluetooth."
 
         dispatcher.utter_message(text=message)
         return []

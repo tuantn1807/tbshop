@@ -21,11 +21,11 @@ nlu:
       - Cho mình hỏi về [tai nghe bluetooth](name)
       - [Macbook Pro](name) giá bao nhiêu?
 
-  - intent: ask_category
-    examples: |
-      - Sản phẩm nào trong dagit push origin --deletenh mục [điện thoại](category)?
-      - Các sản phẩm thuộc [máy tính bảng](category) có gì?
-      - Cho mình xem [phụ kiện](category)
+#  - intent: ask_category
+#    examples: |
+#      - Sản phẩm nào trong danh mục [điện thoại](category)?
+#      - Các sản phẩm thuộc [máy tính bảng](category) có gì?
+#      - Cho mình xem [phụ kiện](category)
 
   - intent: affirm
     examples: |

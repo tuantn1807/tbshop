@@ -6,7 +6,6 @@ import '../models/rating_model.dart';
 
 
 class PreprocessingService {
-  // Tính tổng số lượng mua cho mỗi sản phẩm theo từng user
   Map<String, Map<String, double>> extractCartFeatures(
       Map<String, List<CartItem>> userCartData) {
     final cartFeatures = <String, Map<String, double>>{};
@@ -20,8 +19,6 @@ class PreprocessingService {
     });
     return cartFeatures;
   }
-
-  // Tính điểm rating cho mỗi sản phẩm theo từng user
   Map<String, Map<String, double>> extractRatingFeatures(List<RatingModel> ratings) {
     final ratingFeatures = <String, Map<String, double>>{};
     for (var rating in ratings) {
@@ -30,8 +27,6 @@ class PreprocessingService {
     }
     return ratingFeatures;
   }
-
-  // Đếm số lần click mỗi sản phẩm theo từng user
   Map<String, Map<String, double>> extractClickFeatures(List<ClickEvent> clicks) {
     final clickFeatures = <String, Map<String, double>>{};
     for (var click in clicks) {
@@ -41,8 +36,6 @@ class PreprocessingService {
     }
     return clickFeatures;
   }
-
-  // Hợp nhất các feature lại theo trọng số, output dạng Map<UserId, Map<ProductId, Score>>
   Map<String, Map<String, double>> mergeFeatures(
       List<Map<String, Map<String, double>>> sources, List<double> weights) {
     final merged = <String, Map<String, double>>{};
@@ -57,14 +50,5 @@ class PreprocessingService {
       });
     }
     return merged;
-  }
-
-  // Chuyển dữ liệu người dùng thành ma trận (không cần dùng nếu không clustering)
-  Matrix convertToMatrix(Map<String, Map<String, double>> userFeatures,
-      List<String> productIds) {
-    final data = userFeatures.values.map((productMap) {
-      return productIds.map((productId) => productMap[productId] ?? 0.0).toList();
-    }).toList();
-    return Matrix.fromList(data);
   }
 }

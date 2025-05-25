@@ -6,10 +6,10 @@ stories:
       - intent: ask_product
       - action: action_get_product_info
 
-  - story: tìm sản phẩm theo danh mục
-    steps:
-      - intent: ask_category
-      - action: action_get_product_info
+#  - story: tìm sản phẩm theo danh mục
+#    steps:
+#      - intent: ask_category
+#      - action: action_get_product_info
 
   - story: chào hỏi
     steps:
