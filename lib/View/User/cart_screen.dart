@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tbshop/View/User/vnpay_service.dart';
 import 'package:tbshop/View/components/custom_text_field.dart';
 
 import '../../viewmodels/cart_viewmodel.dart';
@@ -72,12 +73,14 @@ class CartScreen extends StatelessWidget {
                 );
                 return;
               }
-              await cart.uploadOrder(
-                receiverName: nameController.text,
-                phoneNumber: phoneController.text,
-                address: addressController.text,
-              );
 
+              // 🔹 Tạo mã đơn hàng tạm thời
+              String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+
+              // 🔹 Gọi cổng thanh toán VNPAY
+              await VNPayService.openVNPay(cart.totalPrice, orderId);
+
+              // 🔹 (Sau khi thanh toán thành công)
               final uid = await cart.getCartId();
               final database = FirebaseDatabase.instance.ref();
               final newOrderRef = database.child("carts/$uid").push();
@@ -89,7 +92,7 @@ class CartScreen extends StatelessWidget {
                   "price": item.product.price,
                   "image": item.product.image,
                   "quantity": item.quantity,
-                  "status": item.status,
+                  "status": "đã thanh toán", // ✅ cập nhật trạng thái mới
                   "orderTime": DateTime.now().toIso8601String(),
                   "receiverName": nameController.text,
                   "phoneNumber": phoneController.text,
@@ -97,21 +100,14 @@ class CartScreen extends StatelessWidget {
                 };
               }
               await newOrderRef.set(productMap);
+
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Đặt hàng thành công!")),
+                SnackBar(content: Text("Đặt hàng và thanh toán thành công!")),
               );
               cart.clearCart();
             },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: Colors.green, width: 2),
-              ),
-              backgroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-            ),
-            child: Text("Đặt hàng", style: TextStyle(fontSize: 18))
-          ),
+            child: Text("Thanh toán qua VNPAY"),
+          )
         ],
       ),
     );
