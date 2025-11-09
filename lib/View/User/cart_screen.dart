@@ -92,7 +92,8 @@ class CartScreen extends StatelessWidget {
                   "price": item.product.price,
                   "image": item.product.image,
                   "quantity": item.quantity,
-                  "status": "đã thanh toán", // ✅ cập nhật trạng thái mới
+                  "status_order": "chưa giao", // ✅ cập nhật trạng thái mới
+                  "status_pay": "đã thanh toán", // ✅ cập nhật trạng thái mới
                   "orderTime": DateTime.now().toIso8601String(),
                   "receiverName": nameController.text,
                   "phoneNumber": phoneController.text,
@@ -107,6 +108,52 @@ class CartScreen extends StatelessWidget {
               cart.clearCart();
             },
             child: Text("Thanh toán qua VNPAY"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameController.text.isEmpty ||
+                  phoneController.text.isEmpty ||
+                  addressController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Vui lòng điền đầy đủ thông tin")),
+                );
+                return;
+              }
+
+              // 🔹 Tạo mã đơn hàng tạm thời
+              String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+
+              // 🔹 Gọi cổng thanh toán VNPAY
+              await VNPayService.openVNPay(cart.totalPrice, orderId);
+
+              // 🔹 (Sau khi thanh toán thành công)
+              final uid = await cart.getCartId();
+              final database = FirebaseDatabase.instance.ref();
+              final newOrderRef = database.child("carts/$uid").push();
+
+              final Map<String, dynamic> productMap = {};
+              for (var item in cart.items) {
+                productMap[item.product.id] = {
+                  "name": item.product.name,
+                  "price": item.product.price,
+                  "image": item.product.image,
+                  "quantity": item.quantity,
+                  "status_order": "chưa giao", // ✅ cập nhật trạng thái mới
+                  "status_pay": "thanh toán trực tiếp khi nhận hàng", // ✅ cập nhật trạng thái mới
+                  "orderTime": DateTime.now().toIso8601String(),
+                  "receiverName": nameController.text,
+                  "phoneNumber": phoneController.text,
+                  "address": addressController.text,
+                };
+              }
+              await newOrderRef.set(productMap);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Đặt hàng và thanh toán thành công!")),
+              );
+              cart.clearCart();
+            },
+            child: Text("Thanh toán khi nhận hàng"),
           )
         ],
       ),

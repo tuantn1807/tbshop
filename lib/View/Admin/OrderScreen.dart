@@ -53,10 +53,10 @@ class _OrderScreenState extends State<OrderScreen> {
         ? 'đã giao'
         : 'chưa giao';
 
-    await _orderRef.child(userId).child(orderId).child(productId).child('status').set(newStatus);
+    await _orderRef.child(userId).child(orderId).child(productId).child('status order').set(newStatus);
 
     setState(() {
-      _allOrders['$userId|$orderId']![productId]['status'] = newStatus;
+      _allOrders['$userId|$orderId']![productId]['status order'] = newStatus;
     });
   }
 

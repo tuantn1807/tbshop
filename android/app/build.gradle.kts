@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.tbshop"
-        minSdkVersion(23) // Set minSdkVersion to at least 23 for Firebase Auth to work
+        minSdkVersion(24) // Set minSdkVersion to at least 23 for Firebase Auth to work
         targetSdkVersion(flutter.targetSdkVersion)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
