@@ -3,97 +3,138 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({Key? key}) : super(key: key);
+
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  List<Map<String, String>> messages = [];
+
+  /// message structure:
+  /// {
+  ///   sender: 'user' | 'bot',
+  ///   type: 'text' | 'product',
+  ///   text: String,
+  ///   images: List<String>
+  /// }
+  final List<Map<String, dynamic>> messages = [];
+
+  final String webhookUrl =
+      'https://n8n.tuantran.io.vn/webhook/8904cc6d-ed98-4759-bd81-6341a005461a';
 
   Future<void> sendMessage(String message) async {
     if (message.trim().isEmpty) return;
 
+    // add user message
     setState(() {
-      messages.add({"sender": "user", "text": message});
+      messages.add({
+        'sender': 'user',
+        'type': 'text',
+        'text': message,
+        'images': [],
+      });
     });
-    //ip của server
+
     try {
       final response = await http.post(
-        //may ao: 10.0.2.2
-        Uri.parse("http://10.0.2.2:5005/webhooks/rest/webhook") ,// sửa localhost
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"sender": "user", "message": message}),
+        Uri.parse(webhookUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'sender': 'user',
+          'message': message,
+        }),
       );
 
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
-
       if (response.statusCode == 200) {
-        List<dynamic> botResponses = jsonDecode(response.body);
-        for (var res in botResponses) {
-          if (res.containsKey("text")) {
-            setState(() {
-              messages.add({"sender": "bot", "text": res["text"]});
+        final data = jsonDecode(response.body);
+
+        if (data is Map && data.containsKey('type')) {
+          setState(() {
+            messages.add({
+              'sender': 'bot',
+              'type': data['type'] ?? 'text',
+              'text': data['text'] ?? '',
+              'images': data['images'] is List
+                  ? List<String>.from(data['images'])
+                  : [],
             });
-          }
+          });
+        } else {
+          _addBotError('Dữ liệu phản hồi không hợp lệ');
         }
       } else {
-        setState(() {
-          messages.add({"sender": "bot", "text": "Bot không phản hồi."});
-        });
+        _addBotError('Bot không phản hồi (HTTP ${response.statusCode})');
       }
     } catch (e) {
-      print("Error: $e");
-      setState(() {
-        messages.add({"sender": "bot", "text": "Lỗi kết nối tới server."});
-      });
+      _addBotError('Lỗi kết nối tới server');
     }
+  }
+
+  void _addBotError(String text) {
+    setState(() {
+      messages.add({
+        'sender': 'bot',
+        'type': 'text',
+        'text': text,
+        'images': [],
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chat với AI")),
+      appBar: AppBar(title: const Text('Chat với AI')),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.all(8),
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final msg = messages[index];
-                return ListTile(
-                  title: Align(
-                    alignment: msg["sender"] == "user"
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: msg["sender"] == "user"
-                            ? Colors.blue[200]
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(msg["text"] ?? ""),
+                final isUser = msg['sender'] == 'user';
+
+                return Align(
+                  alignment:
+                  isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.all(12),
+                    constraints: const BoxConstraints(maxWidth: 320),
+                    decoration: BoxDecoration(
+                      color: isUser ? Colors.blue[200] : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    child: _buildMessageContent(msg),
                   ),
                 );
               },
             ),
           ),
+          const Divider(height: 1),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(hintText: "Nhập tin nhắn..."),
+                    decoration: const InputDecoration(
+                      hintText: 'Nhập tin nhắn...',
+                      border: OutlineInputBorder(),
+                    ),
+                    onSubmitted: (value) {
+                      sendMessage(value);
+                      _controller.clear();
+                    },
                   ),
                 ),
+                const SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: () {
                     sendMessage(_controller.text);
                     _controller.clear();
@@ -104,6 +145,47 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMessageContent(Map<String, dynamic> msg) {
+    final String text = msg['text'] ?? '';
+    final List<String> images =
+    msg['images'] != null ? List<String>.from(msg['images']) : [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (text.isNotEmpty)
+          Text(
+            text,
+            style: const TextStyle(fontSize: 15),
+          ),
+        if (images.isNotEmpty) const SizedBox(height: 8),
+        if (images.isNotEmpty)
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: images.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      images[index],
+                      width: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                      const Icon(Icons.broken_image),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 }
