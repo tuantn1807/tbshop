@@ -1,6 +1,0 @@
-[
-  {
-    "name": "category",
-    "pattern": "(\\bđiện\\ thoại\\b|\\bmáy\\ tính\\ bảng\\b|\\bphụ\\ kiện\\b|\\bthời\\ trang\\b|\\bgia\\ dụng\\b|\\bđiện\\ tử\\b|\\bthực\\ phẩm\\b|\\bvăn\\ phòng\\ phẩm\\b|\\bthể\\ thao\\b|\\bđồ\\ chơi\\b)"
-  }
-]

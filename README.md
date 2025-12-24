@@ -2,7 +2,7 @@
 
 ## Mô tả chung
 
-**TLShop** là ứng dụng thương mại điện tử đa nền tảng được xây dựng bằng **Flutter** và **Firebase**, được thiết kế theo **kiến trúc MVVM**. Ứng dụng tích hợp **Trí tuệ nhân tạo (AI)** để nâng cao trải nghiệm người dùng thông qua các gợi ý sản phẩm cá nhân hóa, dự báo nhu cầu và hỗ trợ khách hàng bằng chatbot.
+**TBShop** là ứng dụng thương mại điện tử đa nền tảng được xây dựng bằng **Flutter** và **Firebase**, được thiết kế theo **kiến trúc MVVM**. Ứng dụng tích hợp **Trí tuệ nhân tạo (AI)** để nâng cao trải nghiệm người dùng thông qua các gợi ý sản phẩm cá nhân hóa, dự báo nhu cầu và hỗ trợ khách hàng bằng chatbot.
 
 ## Tính năng:
 ### Admin

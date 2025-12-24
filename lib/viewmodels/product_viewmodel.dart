@@ -1,12 +1,11 @@
 import 'dart:typed_data';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_web/image_picker_web.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/product_model.dart';
@@ -14,6 +13,8 @@ import '../models/product_model.dart';
 class ProductViewModel extends ChangeNotifier {
   final DatabaseReference _dbRef =
   FirebaseDatabase.instance.ref("products");
+
+  final ImagePicker _picker = ImagePicker();
 
   List<ProductModel> _products = [];
   List<ProductModel> get products => _products;
@@ -39,18 +40,15 @@ class ProductViewModel extends ChangeNotifier {
     });
   }
 
-  // ================= PICK IMAGE (WEB + MOBILE) =================
+  // ================= PICK IMAGE (MOBILE ONLY) =================
   Future<Uint8List?> pickImage() async {
-    if (kIsWeb) {
-      return await ImagePickerWeb.getImageAsBytes();
-    } else {
-      final picker = ImagePicker();
-      final file = await picker.pickImage(source: ImageSource.gallery);
-      if (file != null) {
-        return await file.readAsBytes();
-      }
-    }
-    return null;
+    final file = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+
+    if (file == null) return null;
+    return await file.readAsBytes();
   }
 
   // ================= UPLOAD IMAGE =================
@@ -69,6 +67,7 @@ class ProductViewModel extends ChangeNotifier {
     return await ref.getDownloadURL();
   }
 
+  // ================= ADD PRODUCT =================
   Future<void> addProduct(
       ProductModel product,
       Uint8List? imageBytes,
@@ -93,17 +92,15 @@ class ProductViewModel extends ChangeNotifier {
       );
 
       // 1. Lưu Firebase
-       await _dbRef.child(newId).set(newProduct.toMap());
+      await _dbRef.child(newId).set(newProduct.toMap());
       fetchProducts();
 
-      // 2. GỌI WEBHOOK n8n (đăng Facebook bằng AI)
+      // 2. Gọi webhook n8n
       await http.post(
         Uri.parse(
-          "https://n8n.tuantran.io.vn/webhook-test/8904cc6d-ed98-4759-bd81-6341a005461a",
+          "https://n8n.tuantran.io.vn/webhook/8904cc6d-ed98-4759-bd81-6341a005461a",
         ),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "id": newProduct.id,
           "name": newProduct.name,
@@ -125,9 +122,8 @@ class ProductViewModel extends ChangeNotifier {
       ) async {
     try {
       if (newImageBytes != null) {
-        final imageUrl =
+        product.image =
         await _uploadImage(newImageBytes, product.id);
-        product.image = imageUrl;
       }
 
       await _dbRef.child(product.id).update(product.toMap());
@@ -140,43 +136,23 @@ class ProductViewModel extends ChangeNotifier {
   // ================= DELETE PRODUCT =================
   Future<void> deleteProduct(String id) async {
     try {
-      final ref = FirebaseStorage.instance
-          .ref("product_images/$id.jpg");
+      await FirebaseStorage.instance
+          .ref("product_images/$id.jpg")
+          .delete();
 
-      await ref.delete();
       await _dbRef.child(id).remove();
       fetchProducts();
     } catch (e) {
       debugPrint("Lỗi khi xóa sản phẩm: $e");
     }
   }
-
-  // ================= GET PRODUCT =================
-  Future<ProductModel?> getProductById(String productId) async {
-    final snapshot = await _dbRef.child(productId).get();
-    if (!snapshot.exists) return null;
-
-    final data = Map<String, dynamic>.from(snapshot.value as Map);
-    return ProductModel.fromMap(data, productId);
-  }
-
-  Future<String?> fetchProductImage(String productId) async {
-    final product = await getProductById(productId);
-    return product?.image;
-  }
-
-  Future<String?> fetchProductName(String productId) async {
-    final product = await getProductById(productId);
-    return product?.name;
-  }
-
   // ================= PROMOTIONS =================
   Future<List<ProductModel>> fetchPromotions() async {
     try {
       final snapshot = await _dbRef.get();
       if (!snapshot.exists) return [];
 
-      _products = snapshot.children
+      final List<ProductModel> promotions = snapshot.children
           .map((child) {
         final data =
         Map<String, dynamic>.from(child.value as Map);
@@ -187,11 +163,11 @@ class ProductViewModel extends ChangeNotifier {
           .whereType<ProductModel>()
           .toList();
 
-      notifyListeners();
-      return _products;
+      return promotions;
     } catch (e) {
       debugPrint("Lỗi khi tải khuyến mãi: $e");
       return [];
     }
   }
+
 }

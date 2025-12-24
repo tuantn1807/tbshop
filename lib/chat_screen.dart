@@ -22,7 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, dynamic>> messages = [];
 
   final String webhookUrl =
-      'https://n8n.tuantran.io.vn/webhook/8904cc6d-ed98-4759-bd81-6341a005461a';
+      'https://n8n.tuantran.io.vn/webhook/55b5ca1e-e679-46bb-93e2-ac35ed11680b';
 
   Future<void> sendMessage(String message) async {
     if (message.trim().isEmpty) return;
