@@ -11,14 +11,6 @@ class ChatScreen extends StatefulWidget {
 //use n8n webhook
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-
-  /// message structure:
-  /// {
-  ///   sender: 'user' | 'bot',
-  ///   type: 'text' | 'product',
-  ///   text: String,
-  ///   images: List<String>
-  /// }
   final List<Map<String, dynamic>> messages = [];
 
   final String webhookUrl =
