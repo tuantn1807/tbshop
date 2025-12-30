@@ -1,4 +1,4 @@
-# TLShop
+# TBShop
 
 ## Mô tả chung
 
@@ -69,32 +69,7 @@
    ```
    flutter run
    ```
-6. Chạy chatbot:
-   Mở 2 terminal, terminal 1 chạy:
-    ```
-   cd rasa_chatbot
-    ```
-    ```
-   python -m venv my_env (chỉ chạy lần đầu)
-    ```
-   ```
-   my_env\Scripts\activate
-    ```
-   ```
-   pip install rasa**(chỉ chạy lần đầu)**
-    ```
-    ```
-   rasa run actions
-    ```
-   terminal 2 chạy:
-    ```
-   cd rasa_chatbot
-    ```
-    ```
-   my_env\Scripts\activate
-    ```
-    ```
-   rasa run --enable-api --cors "*" --port 5005 --debug
+
 ### Tài khoản demo
-- **Admin**: 030041975 / password: 123456789
-- **User**: 0911103884 / password: 18072004
+- **Admin**: 1 / password: 1
+- **User**: 789/ password: 789
